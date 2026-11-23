@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Migo AI Studio</title>
+<style>
+:root{--bg:#0b1020;--panel:#141d33;--panel2:#1b2945;--text:#f4f7ff;--muted:#aab6d0;--accent:#69a7ff;--line:#2a3958}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0b1020,#111b32);color:var(--text);font-family:Tahoma,Arial,sans-serif}
+header{padding:24px 18px;background:#111c35;border-bottom:1px solid var(--line)}
+.wrap{max-width:1000px;margin:auto}h1{margin:0;font-size:28px}header p{color:var(--muted);margin:8px 0 0}
+main{padding:22px 16px}.hero{background:linear-gradient(120deg,#183b70,#24245b);padding:22px;border-radius:18px;margin-bottom:18px}.hero h2{margin:0 0 8px}.hero p{margin:0;color:#d9e7ff;line-height:1.8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+label{display:block;margin:12px 0 7px;color:#dce6fa;font-size:14px}input,select,textarea{width:100%;background:#0d1528;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:12px;font:inherit}
+textarea{min-height:100px;resize:vertical}button{border:0;border-radius:10px;padding:11px 16px;background:var(--accent);color:#071329;font-weight:bold;cursor:pointer;margin:8px 5px 0 0}button.secondary{background:#293b5d;color:#fff}button:hover{filter:brightness(1.1)}
+.output{white-space:pre-wrap;line-height:1.8;background:#0d1528;border:1px solid var(--line);padding:14px;border-radius:10px;min-height:130px;color:#e7efff}
+.small{font-size:12px;color:var(--muted);line-height:1.7}.full{grid-column:1/-1}.actions{display:flex;flex-wrap:wrap;gap:6px}
+footer{text-align:center;color:var(--muted);padding:22px;font-size:12px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>🎬 Migo AI Studio</h1><p>استوديو بسيط لتجهيز أفكار الفيديوهات والمشاهد والبرومبتات</p></div></header>
+<main class="wrap">
+<section class="hero"><h2>حوّل فكرتك إلى مشروع فيديو</h2><p>اكتب فكرتك، اختر نوع الفيديو، ثم جهّز المشاهد والبرومبتات والتعليق الصوتي. هذه نسخة البداية المجانية؛ توليد الفيديو الفعلي سنضيفه لاحقًا عبر خدمات خارجية حسب حدودها المجانية.</p></section>
+<div class="grid">
+<section class="card">
+<h3>١. إعداد المشروع</h3>
+<label for="idea">فكرة الفيديو</label><textarea id="idea" placeholder="مثال: طفل يجد بابًا سريًا في غابة سحرية..."></textarea>
+<label for="genre">نوع الفيديو</label><select id="genre"><option>كرتون ثلاثي الأبعاد</option><option>واقعي سينمائي</option><option>مغامرة وتشويق</option><option>تعليمي</option><option>قصة ملهمة</option></select>
+<label for="length">عدد المشاهد</label><select id="length"><option value="5">5 مشاهد</option><option value="8" selected>8 مشاهد</option><option value="10">10 مشاهد</option></select>
+<label for="voice">لغة التعليق الصوتي</label><select id="voice"><option>العربية المصرية</option><option>العربية الفصحى</option><option>English</option></select>
+<button id="build">إنشاء مخطط المشاهد</button>
+</section>
+<section class="card">
+<h3>٢. معاينة البرومبت</h3>
+<p class="small">سيتم إنشاء مسودة منظمة من فكرتك داخل المتصفح، دون إرسالها إلى أي موقع خارجي.</p>
+<div id="summary" class="output">اكتب فكرة الفيديو واضغط «إنشاء مخطط المشاهد».</div>
+<div class="actions"><button class="secondary" id="copySummary">نسخ المخطط</button><button class="secondary" id="download">حفظ ملف TXT</button></div>
+</section>
+<section class="card full">
+<h3>٣. المشاهد والبرومبتات</h3>
+<div id="scenes" class="output">ستظهر المشاهد هنا بعد إنشاء المخطط.</div>
+<div class="actions"><button class="secondary" id="copyScenes">نسخ كل المشاهد</button></div>
+</section>
+<section class="card full">
+<h3>٤. أدوات الإنتاج القادمة</h3>
+<p class="small">توليد الصور • تحويل النص إلى صوت • تحريك الصور • تجميع الفيديو • الترجمة والتصدير. سنضيف كل وظيفة على مراحل، مع توضيح ما هو مجاني وما له حدود استخدام.</p>
+</section>
+</div>
+</main>
+<footer>Migo AI Studio — النسخة التجريبية الأولى</footer>
+<script>
+let summaryText="", scenesText="";
+const $=id=>document.getElementById(id);
+function make(){
+ const idea=$("idea").value.trim(); if(!idea){alert("اكتب فكرة الفيديو أولاً.");$("idea").focus();return;}
+ const genre=$("genre").value, n=Number($("length").value), voice=$("voice").value;
+ summaryText=`Migo AI Studio\\nالفكرة: ${idea}\\nالأسلوب: ${genre}\\nعدد المشاهد: ${n}\\nلغة التعليق: ${voice}\\n\\nملاحظة: هذه مسودة تخطيط وليست توليدًا فعليًا للفيديو.`;
+ const hooks=["ابدأ بلقطة قوية تثير الفضول خلال أول ثانيتين.","قدّم الشخصية الرئيسية ومشكلتها بوضوح.","اكشف أول دليل يقود إلى حل اللغز.","اجعل التحدي أكبر وارفع مستوى التشويق.","أظهر محاولة الشخصية لمواجهة التحدي.","أضف مفاجأة تغيّر فهم المشاهد للأحداث.","اقترب من الحل مع الحفاظ على التشويق.","اختم بنتيجة مؤثرة أو سؤال يمهّد للجزء التالي.","أضف لحظة تعليمية أو قيمة واضحة للقصة.","اختم بدعوة لطيفة للتفاعل."];
+ let arr=[];
+ for(let i=0;i<n;i++){
+  arr.push(`المشهد ${i+1}\\nوصف المشهد: ${hooks[i]||"طوّر الأحداث مع الحفاظ على تسلسل القصة."}\\nالفكرة الأصلية: ${idea}\\n\\nEnglish video prompt:\\nCreate a ${genre} video scene based on: ${idea}. Scene ${i+1} of ${n}. Maintain consistent characters, environment, lighting and visual style. Cinematic composition, clear action, smooth camera movement, high detail. No subtitles, no logos.\\n\\nالتعليق الصوتي (${voice}):\\nاكتب جملة قصيرة مناسبة لهذا المشهد بعد مراجعة أحداث القصة.`);
+ }
+ scenesText=arr.join("\\n\\n--------------------\\n\\n");
+ $("summary").textContent=summaryText; $("scenes").textContent=scenesText;
+}
+$("build").addEventListener("click",make);
+$("copySummary").addEventListener("click",()=>copy(summaryText));
+$("copyScenes").addEventListener("click",()=>copy(scenesText));
+function copy(t){if(!t){alert("أنشئ المخطط أولاً.");return;}navigator.clipboard.writeText(t).then(()=>alert("تم النسخ.")).catch(()=>alert("تعذر النسخ تلقائيًا؛ حدد النص وانسخه يدويًا."));}
+$("download").addEventListener("click",()=>{if(!summaryText){alert("أنشئ المخطط أولاً.");return;}let blob=new Blob([summaryText+"\\n\\n"+scenesText],{type:"text/plain;charset=utf-8"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="Migo-AI-Studio-project.txt";a.click();URL.revokeObjectURL(a.href);});
+</script>
+</body></html>
